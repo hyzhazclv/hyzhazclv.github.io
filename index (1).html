@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="vi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>HYZHAZ Arena</title>
+<style>
+:root{--fg:#fff;--mut:#ffffff88;--line:#ffffff26;--card:#ffffff09;--ok:#4ade80;--bad:#f87171;--warn:#facc15;--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:#000;color:var(--fg);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+button,input,select{font:inherit;color:inherit}
+input,select{width:100%;background:#ffffff0d;border:1px solid var(--line);border-radius:12px;padding:12px 14px;outline:0;margin:5px 0}
+input:focus,select:focus{border-color:#fff}
+select option{background:#111}
+button{border:1px solid #ffffff55;background:#000;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer}
+button.pri{background:#fff;color:#000;border:0}
+button.sm{padding:7px 12px;font-size:13px;border-radius:10px}
+button:disabled{opacity:.4}
+button.bad{border-color:var(--bad);color:var(--bad)}
+h2{margin:18px 0 8px;font-size:17px}
+.wrap{max-width:560px;margin:0 auto;padding:14px 14px calc(84px + var(--sab))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:10px 0}
+.card h3{margin:0 0 6px;font-size:15px}
+.mut{color:var(--mut);font-size:13px}.ok{color:var(--ok)}.bad{color:var(--bad)}.warn{color:var(--warn)}
+.row{display:flex;gap:8px;align-items:center}.row>*{flex:1}.row>.fit{flex:none}
+.sp{justify-content:space-between}
+.big{font-size:30px;font-weight:800;letter-spacing:.5px;font-variant-numeric:tabular-nums}
+.pill{display:inline-block;border:1px solid var(--line);border-radius:99px;padding:2px 10px;font-size:12px;color:var(--mut)}
+.pill.on{border-color:var(--ok);color:var(--ok)}
+header{position:sticky;top:0;z-index:5;background:#000d;backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:calc(10px + var(--sat)) 14px 10px}
+header .in{max-width:560px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{font-weight:900;letter-spacing:3px}.brand small{display:block;letter-spacing:1px;font-weight:500;color:var(--mut);font-size:11px}
+.bal{border:1px solid var(--line);border-radius:12px;padding:6px 12px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:5;background:#000e;backdrop-filter:blur(8px);border-top:1px solid var(--line);display:flex;padding-bottom:var(--sab)}
+nav button{flex:1;border:0;border-radius:0;background:none;padding:12px 2px;font-size:12px;color:var(--mut)}
+nav button.on{color:#fff;box-shadow:inset 0 2px 0 #fff}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td,th{padding:8px 4px;border-bottom:1px solid #ffffff14;text-align:left;font-size:14px}th{color:var(--mut);font-weight:500;font-size:12px}
+td.r,th.r{text-align:right}
+tr.me td{background:#ffffff10}
+.seg{display:flex;gap:6px;margin:8px 0}.seg button{flex:1;padding:9px;font-size:13px}.seg button.on{background:#fff;color:#000}
+#auth{max-width:380px;margin:0 auto;padding:calc(40px + var(--sat)) 20px 30px}
+#auth .logo{text-align:center;font-size:32px;font-weight:900;letter-spacing:6px;margin-bottom:4px}
+#chatbox{height:52vh;overflow-y:auto;padding:4px 2px}
+.msg{padding:5px 0;word-break:break-word}.msg b{margin-right:6px}.msg.adm b{color:var(--warn)}.msg i{font-style:normal;color:var(--mut);font-size:11px;margin-left:6px}
+#ov{position:fixed;inset:0;z-index:20;background:#000;display:none;flex-direction:column}
+#ov.show{display:flex}
+#ovbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:calc(8px + var(--sat)) 12px 8px;border-bottom:1px solid var(--line);font-size:13px}
+#gf{flex:1;border:0;width:100%;background:#000}
+#toast{position:fixed;left:12px;right:12px;bottom:calc(76px + var(--sab));z-index:30;background:#fff;color:#000;border-radius:14px;padding:12px 14px;font-weight:700;display:none;text-align:center}
+.hide{display:none!important}
+</style></head><body>
+
+<div id="auth">
+  <div class="logo">HYZHAZ</div>
+  <div class="mut" style="text-align:center;margin-bottom:18px">Arena · thi giải Rubik · miễn phí tham gia</div>
+  <div class="seg"><button id="tl" class="on">Đăng nhập</button><button id="tr">Đăng ký</button></div>
+  <input id="au" placeholder="Tên tài khoản" autocapitalize="off" autocomplete="username">
+  <input id="ap" type="password" placeholder="Mật khẩu" autocomplete="current-password">
+  <input id="ap2" type="password" placeholder="Nhập lại mật khẩu" class="hide" autocomplete="new-password">
+  <button class="pri" id="ago" style="width:100%;margin-top:8px">Đăng nhập</button>
+  <div id="aerr" class="bad" style="margin-top:10px;text-align:center;min-height:20px"></div>
+  <div class="mut" style="text-align:center;margin-top:10px;font-size:12px">Máy chủ: <span id="srvl">…</span> · <a href="#" id="srvx" style="color:#fff">đổi</a></div><div class="mut" style="text-align:center;margin-top:10px;font-size:12px">Tên 3-20 ký tự (chữ không dấu, số, _) · mật khẩu từ 6 ký tự</div>
+</div>
+
+<div id="main" class="hide">
+  <header><div class="in"><div class="brand">HYZHAZ<small id="who"></small></div><div class="bal" id="bal">0đ</div></div></header>
+  <div class="wrap" id="view"></div>
+  <nav id="nav"></nav>
+</div>
+
+<div id="ov"><div id="ovbar"><span id="ovt">Thi đấu</span><button class="sm" id="ovx">Thoát</button></div><iframe id="gf" title="game"></iframe></div>
+<div id="toast"></div>
+
+<script>
+(()=>{
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const vnd=n=>Number(n||0).toLocaleString('vi-VN')+'đ';
+const fmt=ms=>{if(ms==null)return '–';const s=ms/1000,m=Math.floor(s/60);return String(m).padStart(2,'0')+':'+(s%60).toFixed(1).padStart(4,'0')};
+const when=t=>new Date(t*1000).toLocaleString('vi-VN',{hour12:false,day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+let API='',TOKEN=null;try{TOKEN=localStorage.getItem('hz_tok')}catch(e){}
+let ME=null,HOME=null,TAB='play',BT='week',CHATLAST=0,CT=null,ATT=null;
+function toast(t,ms){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display='none',ms||2600)}
+async function api(path,body,method){
+  const o={method:method||(body?'POST':'GET'),headers:{'Content-Type':'application/json'}};
+  if(TOKEN)o.headers.Authorization='Bearer '+TOKEN;
+  if(body&&o.method==='POST')o.body=JSON.stringify(body);
+  if(body&&o.method==='GET')path+='?'+new URLSearchParams(body);
+  let r,j={};try{r=await fetch(API+path,o)}catch(e){throw new Error('Không kết nối được máy chủ. Admin chưa bật server hoặc link đã đổi.')}
+  try{j=await r.json()}catch(e){}
+  if(r.status===401&&TOKEN&&path!=='/api/login'){logout(true)}
+  if(!r.ok)throw new Error(j.error||('Lỗi '+r.status));
+  return j}
+function setTok(t){TOKEN=t;try{t?localStorage.setItem('hz_tok',t):localStorage.removeItem('hz_tok')}catch(e){}}
+function logout(silent){setTok(null);ME=null;clearInterval(CT);$('#main').classList.add('hide');$('#auth').classList.remove('hide');if(!silent)toast('Đã đăng xuất')}
+
+// ---------- đăng nhập / đăng ký
+let REG=false;
+function authMode(r){REG=r;$('#tl').classList.toggle('on',!r);$('#tr').classList.toggle('on',r);$('#ap2').classList.toggle('hide',!r);$('#ago').textContent=r?'Tạo tài khoản':'Đăng nhập';$('#aerr').textContent=''}
+$('#tl').onclick=()=>authMode(false);$('#tr').onclick=()=>authMode(true);
+$('#ago').onclick=async()=>{
+  const u=$('#au').value.trim(),p=$('#ap').value;$('#aerr').textContent='';
+  if(REG&&p!==$('#ap2').value){$('#aerr').textContent='Hai mật khẩu không khớp';return}
+  $('#ago').disabled=true;
+  try{const r=await api(REG?'/api/register':'/api/login',{username:u,password:p});setTok(r.token);$('#ap').value='';$('#ap2').value='';await enter()}
+  catch(e){$('#aerr').textContent=e.message}finally{$('#ago').disabled=false}};
+$('#ap').addEventListener('keydown',e=>{if(e.key==='Enter'&&!REG)$('#ago').click()});
+
+async function enter(){
+  await loadHome();$('#auth').classList.add('hide');$('#main').classList.remove('hide');
+  $('#who').textContent=ME.username+(ME.is_admin?' · ADMIN':'');
+  const tabs=ME.is_admin?[['play','Tổng quan'],['board','BXH'],['chat','Chat'],['adm','Quản trị']]:[['play','Thi đấu'],['board','BXH'],['chat','Chat'],['wallet','Ví']];
+  $('#nav').innerHTML=tabs.map(t=>`<button data-t="${t[0]}">${t[1]}</button>`).join('');
+  $('#nav').querySelectorAll('button').forEach(b=>b.onclick=()=>go(b.dataset.t));
+  go('play');clearInterval(CT);CT=setInterval(tick,4000)}
+async function loadHome(){HOME=await api('/api/home');ME=HOME.me;$('#bal').textContent=vnd(ME.balance)}
+function tick(){if(TAB==='chat')pollChat()}
+async function go(t){TAB=t;$('#nav').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+  try{if(t==='play'){await loadHome();rPlay()}else if(t==='board')await rBoard();else if(t==='chat')await rChat();else if(t==='wallet')await rWallet();else if(t==='adm')await rAdmin()}
+  catch(e){$('#view').innerHTML='<div class="card bad">'+esc(e.message)+'</div>'}}
+
+// ---------- thi đấu
+function rPlay(){
+  const w=HOME.week,ev=HOME.event,left=w.max-w.used;
+  let h=`<div class="card"><div class="row sp"><h3>Giải tuần ${esc(w.from)} → ${esc(w.to)}</h3><span class="pill ${w.joined?'on':''}">${w.joined?'Đã đăng ký':'Chưa đăng ký'}</span></div>
+  <div class="mut">Mỗi tuần ${w.max} lượt thi. Điểm tuần = trung bình ${w.need} lượt giải nhanh nhất. Chốt cuối thứ 7.</div>
+  <div class="row" style="margin:10px 0"><div><div class="mut">Lượt còn lại</div><div class="big">${left}/${w.max}</div></div>
+  <div><div class="mut">Lượt hợp lệ</div><div class="big">${w.valid}/${w.need}</div></div>
+  <div><div class="mut">Điểm tuần</div><div class="big" style="font-size:22px">${w.score!=null?fmt(w.score):'–'}</div></div></div>`;
+  if(ME.is_admin)h+='<div class="mut">Admin không tham gia thi.</div>';
+  else if(!w.joined)h+='<button class="pri" id="jw" style="width:100%">Đăng ký tham gia tuần này</button>';
+  else h+=`<button class="pri" id="st" style="width:100%" ${left<=0?'disabled':''}>${left<=0?'Hết lượt tuần này':'BẮT ĐẦU THI (trừ 1 lượt)'}</button>`;
+  h+='</div>';
+  if(ev){h+=`<div class="card"><div class="row sp"><h3>Sự kiện hôm nay</h3><span class="pill ${ev.status==='open'?'on':''}">${ev.status==='open'?'Đang mở':'Đã đóng'}</span></div>
+    <div style="font-weight:800;font-size:17px">${esc(ev.title)}</div><div class="mut">Giải nhất: <b style="color:#fff">${vnd(ev.prize)}</b> · ${ev.players} người đăng ký</div>`;
+    if(ev.status==='closed')h+=`<div style="margin-top:8px">Người thắng: <b>${esc(ev.winner||'không có')}</b>${ev.win_ms?' · '+fmt(ev.win_ms):''}</div>`;
+    else if(!ME.is_admin)h+=ev.joined?'<div class="ok" style="margin-top:8px">✔ Bạn đã đăng ký. Các lượt thi hôm nay sẽ tính vào sự kiện.</div>':'<button id="je" style="width:100%;margin-top:8px">Đăng ký sự kiện hôm nay</button>';
+    h+='</div>'}
+  else h+='<div class="card mut">Hôm nay chưa có sự kiện. Admin sẽ tạo mỗi ngày một sự kiện.</div>';
+  h+='<div class="card"><h3>Luyện tập</h3><div class="mut">Chơi thoải mái, có Auto giải, không tính điểm.</div><button id="pr" style="width:100%;margin-top:8px">Mở game luyện tập</button></div>';
+  h+='<h2>Lượt thi tuần này</h2><div class="card">';
+  if(!HOME.history.length)h+='<div class="mut">Chưa có lượt nào.</div>';
+  else h+='<table><tr><th>#</th><th>Giờ</th><th class="r">Thời gian</th><th class="r">Nước</th><th class="r">Kết quả</th></tr>'+HOME.history.map((a,i)=>{const st={valid:'<span class="ok">hợp lệ</span>',invalid:'<span class="bad">loại</span>',abandoned:'<span class="warn">bỏ dở</span>',started:'<span class="warn">đang thi</span>'}[a.status]||a.status;
+    return `<tr><td>${HOME.history.length-i}</td><td>${when(a.started)}</td><td class="r">${fmt(a.time_ms)}</td><td class="r">${a.moves||'–'}</td><td class="r">${st}</td></tr>`}).join('')+'</table>';
+  h+='</div><div class="mut" style="font-size:12px">Thời gian chính thức do máy chủ đo (từ lúc bấm bắt đầu, gồm cả lúc khối được trộn). Mọi nước đi đều được máy chủ chạy lại để kiểm tra.</div>';
+  $('#view').innerHTML=h;
+  const b=(id,f)=>{const e=$(id);if(e)e.onclick=f};
+  b('#jw',async()=>{try{await api('/api/join_week',{});toast('Đã đăng ký tuần này');go('play')}catch(e){toast(e.message)}});
+  b('#je',async()=>{try{await api('/api/join_event',{event_id:ev.id});toast('Đã đăng ký sự kiện');go('play')}catch(e){toast(e.message)}});
+  b('#st',startContest);b('#pr',()=>openGame(null))}
+
+function openGame(seed){
+  const f=$('#gf');$('#ov').classList.add('show');$('#ovt').textContent=seed==null?'Luyện tập':'Thi đấu · máy chủ đang bấm giờ';
+  f.onload=()=>{ if(seed!=null){try{f.contentWindow.HZ.start(seed,onSolved)}catch(e){toast('Không nạp được game')}} };
+  f.src='game.html?'+Date.now()}
+$('#ovx').onclick=()=>{ if(ATT&&!confirm('Thoát lúc đang thi sẽ mất lượt này. Thoát?'))return; ATT=null;$('#ov').classList.remove('show');$('#gf').src='about:blank';go('play')};
+async function startContest(){
+  if(!confirm('Bấm bắt đầu sẽ trừ 1 lượt và tính giờ ngay. Thoát giữa chừng vẫn mất lượt. Bắt đầu?'))return;
+  try{const r=await api('/api/attempt/start',{});ATT=r.attempt_id;openGame(r.seed)}catch(e){toast(e.message)}}
+async function onSolved(moves){
+  const id=ATT;if(!id)return;ATT=null;
+  try{const r=await api('/api/attempt/finish',{attempt_id:id,moves});
+    $('#ov').classList.remove('show');$('#gf').src='about:blank';
+    if(r.valid)toast('✔ Hợp lệ: '+fmt(r.time_ms)+' · '+r.moves+' nước',4000);else toast('✖ Lượt bị loại: '+r.reason,5000);
+    go('play')}
+  catch(e){toast(e.message,5000)}}
+
+// ---------- bảng xếp hạng
+async function rBoard(){
+  const evs=(await api('/api/events')).events;
+  let h='<div class="seg"><button data-b="week" class="'+(BT==='week'?'on':'')+'">Tuần</button><button data-b="ev" class="'+(BT==='ev'?'on':'')+'">Sự kiện</button></div>';
+  if(BT==='week'){
+    const r=await api('/api/board',{type:'week'});
+    h+=`<div class="card"><div class="row sp"><h3>Tuần ${esc(r.from)} → ${esc(r.to)}</h3>${r.closed?'<span class="pill">Đã chốt</span>':''}</div><div class="mut">Điểm = trung bình ${r.need} lượt nhanh nhất · cần đủ ${r.need} lượt hợp lệ để có hạng</div>`;
+    h+=r.rows.length?'<table><tr><th>#</th><th>Người chơi</th><th class="r">Điểm</th><th class="r">Lượt</th></tr>'+r.rows.map((x,i)=>`<tr class="${x.username===ME.username?'me':''}"><td>${x.score!=null?i+1:'·'}</td><td>${esc(x.username)}</td><td class="r">${x.score!=null?fmt(x.score):'chưa đủ'}</td><td class="r">${x.valid}/${x.used}</td></tr>`).join('')+'</table>':'<div class="mut" style="margin-top:8px">Chưa có ai đăng ký.</div>';
+    h+='</div>'}
+  else{
+    h+='<select id="evs">'+evs.map(e=>`<option value="${e.id}">${esc(e.day)} · ${esc(e.title)}${e.status==='closed'?' (đã đóng)':''}</option>`).join('')+'</select><div id="evb"></div>'}
+  $('#view').innerHTML=h;
+  $('#view').querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{BT=b.dataset.b;rBoard()});
+  if(BT==='ev'){const s=$('#evs');const load=async()=>{if(!s.value){$('#evb').innerHTML='<div class="card mut">Chưa có sự kiện nào.</div>';return}
+    const r=await api('/api/board',{type:'event',event_id:s.value});const e=r.event;
+    $('#evb').innerHTML=`<div class="card"><h3>${esc(e.title)}</h3><div class="mut">Giải nhất ${vnd(e.prize)} · ${e.status==='closed'?'Thắng: '+esc(e.winner||'không có'):'đang diễn ra'}</div>`+
+      (r.rows.length?'<table><tr><th>#</th><th>Người chơi</th><th class="r">Tốt nhất</th><th class="r">Lượt</th></tr>'+r.rows.map((x,i)=>`<tr class="${x.username===ME.username?'me':''}"><td>${x.best!=null?i+1:'·'}</td><td>${esc(x.username)}</td><td class="r">${fmt(x.best)}</td><td class="r">${x.n}</td></tr>`).join('')+'</table>':'<div class="mut" style="margin-top:8px">Chưa ai đăng ký.</div>')+'</div>'};
+    s.onchange=load;load()}}
+
+// ---------- chat
+async function rChat(){
+  CHATLAST=0;$('#view').innerHTML='<div class="card"><div id="chatbox"></div></div><div class="row"><input id="cm" maxlength="200" placeholder="Nhập tin nhắn..."><button class="pri fit" id="cs">Gửi</button></div>';
+  $('#cs').onclick=sendChat;$('#cm').addEventListener('keydown',e=>{if(e.key==='Enter')sendChat()});await pollChat()}
+async function pollChat(){
+  const box=$('#chatbox');if(!box)return;
+  try{const r=await api('/api/chat',{after:CHATLAST});if(!r.msgs.length)return;
+    const near=box.scrollHeight-box.scrollTop-box.clientHeight<80||CHATLAST===0;
+    for(const m of r.msgs){CHATLAST=Math.max(CHATLAST,m.id);const d=document.createElement('div');d.className='msg'+(m.adm?' adm':'');
+      const b=document.createElement('b');b.textContent=m.u+(m.adm?' ★':'');const s=document.createElement('span');s.textContent=m.m;const i=document.createElement('i');i.textContent=new Date(m.t*1000).toTimeString().slice(0,5);
+      d.append(b,s,i);box.appendChild(d)}
+    if(near)box.scrollTop=box.scrollHeight}catch(e){}}
+async function sendChat(){const i=$('#cm'),m=i.value.trim();if(!m)return;i.value='';try{await api('/api/chat',{msg:m});pollChat()}catch(e){toast(e.message)}}
+
+// ---------- ví
+async function rWallet(){
+  await loadHome();const w=await api('/api/wallet');const H=HOME;
+  const st={pending:'<span class="warn">chờ xử lý</span>',paid:'<span class="ok">đã trả</span>',rejected:'<span class="bad">từ chối (đã hoàn tiền)</span>'};
+  let h=`<div class="card"><div class="mut">Số dư</div><div class="big">${vnd(w.balance)}</div><div class="mut">Tiền thưởng thắng giải. Web không có nạp tiền.</div></div>
+  <div class="card"><h3>Rút tiền</h3><div class="seg"><button data-m="bank" class="on">Ngân hàng</button><button data-m="card">Thẻ cào</button></div>
+  <div id="wf"></div><button class="pri" id="wgo" style="width:100%;margin-top:8px">Gửi yêu cầu rút</button>
+  <div class="mut" style="margin-top:8px;font-size:12px">Tiền bị trừ ngay khi gửi yêu cầu. Admin xử lý thủ công; nếu bị từ chối tiền được hoàn lại.</div></div>
+  <h2>Yêu cầu rút</h2><div class="card">`;
+  h+=w.withdrawals.length?'<table>'+w.withdrawals.map(x=>{let d={};try{d=JSON.parse(x.details)}catch(e){}return `<tr><td>${when(x.created)}</td><td>${x.method==='bank'?'NH '+esc(d.bank||''):'Thẻ '+esc(d.carrier||'')}</td><td class="r">${vnd(x.amount)}</td><td class="r">${st[x.status]||x.status}</td></tr>`}).join('')+'</table>':'<div class="mut">Chưa có.</div>';
+  h+='</div><h2>Lịch sử số dư</h2><div class="card">'+(w.ledger.length?'<table>'+w.ledger.map(x=>`<tr><td>${when(x.created)}</td><td>${{prize:'Thưởng',withdraw:'Rút',refund:'Hoàn'}[x.kind]||x.kind}</td><td class="r ${x.amount>0?'ok':'bad'}">${x.amount>0?'+':''}${vnd(x.amount)}</td></tr>`).join('')+'</table>':'<div class="mut">Chưa có.</div>')+'</div>';
+  $('#view').innerHTML=h;let M='bank';
+  const form=()=>{$('#wf').innerHTML=M==='bank'?`<input id="wb" placeholder="Tên ngân hàng (VD: Vietcombank)"><input id="wa" inputmode="numeric" placeholder="Số tài khoản"><input id="wh" placeholder="Tên chủ tài khoản"><input id="wm" inputmode="numeric" placeholder="Số tiền (tối thiểu ${vnd(H.min_withdraw)})">`:
+    `<select id="wc">${H.cards.map(c=>`<option>${esc(c)}</option>`).join('')}</select><select id="wm">${H.card_values.map(v=>`<option value="${v}">${vnd(v)}</option>`).join('')}</select>`};
+  form();$('#view').querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{M=b.dataset.m;$('#view').querySelectorAll('[data-m]').forEach(x=>x.classList.toggle('on',x===b));form()});
+  $('#wgo').onclick=async()=>{const amount=parseInt($('#wm').value.replace(/\D/g,''),10)||0;
+    const body=M==='bank'?{method:'bank',bank:$('#wb').value,account:$('#wa').value,holder:$('#wh').value,amount}:{method:'card',carrier:$('#wc').value,amount};
+    if(!confirm('Gửi yêu cầu rút '+vnd(amount)+'?'))return;
+    try{await api('/api/withdraw',body);toast('Đã gửi yêu cầu rút');rWallet()}catch(e){toast(e.message)}}}
+
+// ---------- quản trị
+async function rAdmin(){
+  const [wd,us,ev]=await Promise.all([api('/api/admin/withdrawals'),api('/api/admin/users'),api('/api/events')]);
+  const today=new Date(Date.now()+7*3600e3).toISOString().slice(0,10);
+  let h=`<div class="card"><h3>Tạo sự kiện (mỗi ngày 1 sự kiện)</h3><input id="ed" value="${today}"><input id="et" placeholder="Tên sự kiện"><input id="ep" inputmode="numeric" placeholder="Giải nhất (đ)" value="10000"><button class="pri" id="eg" style="width:100%">Tạo sự kiện</button></div>
+  <div class="card"><h3>Sự kiện gần đây</h3>`+(ev.events.length?'<table>'+ev.events.map(e=>`<tr><td>${esc(e.day)}</td><td>${esc(e.title)}<div class="mut">${vnd(e.prize)} · ${e.players} người${e.status==='closed'?' · thắng: '+esc(e.winner||'không có'):''}</div></td><td class="r">${e.status==='open'?`<button class="sm" data-ec="${e.id}">Đóng &amp; trao giải</button>`:'<span class="mut">đã đóng</span>'}</td></tr>`).join('')+'</table>':'<div class="mut">Chưa có.</div>')+`</div>
+  <div class="card"><h3>Chốt giải tuần này</h3><div class="mut">Trao thưởng cho người có điểm tuần tốt nhất (cần đủ ${HOME.week.need} lượt hợp lệ).</div><input id="wp" inputmode="numeric" placeholder="Giải thưởng tuần (đ)" value="0"><button id="wc" style="width:100%">Chốt tuần ${esc(HOME.week.from)} → ${esc(HOME.week.to)}</button></div>
+  <h2>Yêu cầu rút tiền</h2><div class="card">`;
+  h+=wd.rows.length?wd.rows.map(x=>{let d={};try{d=JSON.parse(x.details)}catch(e){}
+    const info=x.method==='bank'?`${esc(d.bank)} · ${esc(d.account)} · ${esc(d.holder)}`:`Thẻ ${esc(d.carrier)}`;
+    return `<div style="padding:8px 0;border-bottom:1px solid #ffffff14"><div class="row sp"><b>${esc(x.username)} · ${vnd(x.amount)}</b><span class="mut">${when(x.created)}</span></div><div class="mut">${info}</div>`+
+      (x.status==='pending'?`<div class="row" style="margin-top:6px"><button class="sm pri" data-wd="paid" data-id="${x.id}">Đã trả</button><button class="sm bad" data-wd="rejected" data-id="${x.id}">Từ chối &amp; hoàn</button></div>`:`<div class="${x.status==='paid'?'ok':'bad'}" style="font-size:13px">${x.status==='paid'?'Đã trả':'Đã từ chối'}</div>`)+'</div>'}).join(''):'<div class="mut">Chưa có yêu cầu.</div>';
+  h+=`</div><h2>Người chơi (${us.rows.length})</h2><div class="card">`+(us.rows.length?'<table>'+us.rows.map(x=>`<tr><td>${esc(x.username)}</td><td class="r">${vnd(x.balance)}</td></tr>`).join('')+'</table>':'<div class="mut">Chưa có.</div>')+'</div>';
+  $('#view').innerHTML=h;
+  $('#eg').onclick=async()=>{try{await api('/api/admin/event',{day:$('#ed').value,title:$('#et').value,prize:parseInt($('#ep').value.replace(/\D/g,''),10)||0});toast('Đã tạo sự kiện');rAdmin()}catch(e){toast(e.message)}};
+  $('#view').querySelectorAll('[data-ec]').forEach(b=>b.onclick=async()=>{if(!confirm('Đóng sự kiện và trao giải cho người nhanh nhất? Không hoàn tác được.'))return;try{const r=await api('/api/admin/event_close',{event_id:+b.dataset.ec});toast(r.winner?'Đã trao giải cho '+r.winner:'Đã đóng (không có người thắng)',3500);rAdmin()}catch(e){toast(e.message)}});
+  $('#wc').onclick=async()=>{if(!confirm('Chốt giải tuần? Không hoàn tác được.'))return;try{const r=await api('/api/admin/week_close',{prize:parseInt($('#wp').value.replace(/\D/g,''),10)||0});toast(r.winner?'Người thắng tuần: '+r.winner:'Đã chốt (chưa ai đủ lượt)',3500);rAdmin()}catch(e){toast(e.message)}};
+  $('#view').querySelectorAll('[data-wd]').forEach(b=>b.onclick=async()=>{if(!confirm(b.dataset.wd==='paid'?'Xác nhận ĐÃ chuyển tiền / gửi thẻ cho người chơi?':'Từ chối và hoàn tiền vào số dư?'))return;try{await api('/api/admin/withdraw_do',{id:+b.dataset.id,action:b.dataset.wd});rAdmin()}catch(e){toast(e.message)}})}
+
+function srvLabel(){$('#srvl').textContent=API?API.replace('https://',''):'cùng địa chỉ trang này'}
+async function boot(){
+  try{const o=localStorage.getItem('hz_api');if(o)API=o;else{const r=await fetch('config.json?t='+Date.now(),{cache:'no-store'});if(r.ok){const j=await r.json();if(j&&j.api)API=String(j.api).replace(/\/$/,'')}}}catch(e){}
+  srvLabel();if(TOKEN)enter().catch(()=>logout(true))}
+$('#srvx').onclick=()=>{const v=prompt('Địa chỉ máy chủ (để trống = tự động):',API||'');if(v===null)return;
+  try{v.trim()?localStorage.setItem('hz_api',v.trim().replace(/\/$/,'')):localStorage.removeItem('hz_api')}catch(e){}location.reload()};
+boot();
+})();
+</script></body></html>
